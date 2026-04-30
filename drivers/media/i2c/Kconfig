@@ -2873,6 +2873,20 @@ config VIDEO_MAX9286
 	  To compile this driver as a module, choose M here: the
 	  module will be called max9286.
 
+config VIDEO_MAX9296_FIXED_YUV
+	tristate "Mixtile fixed MAX9296 YUV source bridge"
+	depends on I2C && VIDEO_DEV
+	depends on MEDIA_CAMERA_SUPPORT
+	select MEDIA_CONTROLLER
+	select VIDEO_V4L2_SUBDEV_API
+	select V4L2_FWNODE
+	help
+	  This driver provides a fixed V4L2 CSI-2 source wrapper fronted by a
+	  MAX9296 deserializer, designed for userspace-configured SerDes chains.
+
+	  To compile this driver as a module, choose M here: the
+	  module will be called max9296_fixed_yuv.
+
 config VIDEO_MAX96712
 	tristate "Maxim MAX96712 GMSL deserializer support"
 	depends on I2C && VIDEO_DEV

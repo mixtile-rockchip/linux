@@ -1,0 +1,302 @@
+/dts-v1/;
+/plugin/;
+
+#include <dt-bindings/gpio/gpio.h>
+#include <dt-bindings/pinctrl/rockchip.h>
+#include <dt-bindings/clock/rk3588-cru.h>
+#include <dt-bindings/power/rk3588-power.h>
+
+/ {
+	/* =========================================================
+	 * GPIO / REGULATOR / I2C MUX
+	 * ========================================================= */
+	fragment@0 {
+		target-path = "/";
+		__overlay__ {
+
+			camera0_pwdn_gpio: camera0-pwdn-gpio {
+				compatible         = "regulator-fixed";
+				regulator-name     = "camera0_pwdn_gpio";
+				regulator-always-on;
+				regulator-boot-on;
+				enable-active-high;
+				gpio               = <&gpio1 RK_PB0 GPIO_ACTIVE_HIGH>;
+			};
+
+			i2cmux1: i2cmux1 {
+				compatible         = "i2c-mux-gpio";
+				#address-cells     = <1>;
+				#size-cells        = <0>;
+				i2c-parent         = <&i2c2>;
+				mux-gpios          = <&gpio3 RK_PA2 GPIO_ACTIVE_HIGH>;
+
+				i2c_cam0: i2c@0 {
+					reg            = <0>;
+					#address-cells = <1>;
+					#size-cells    = <0>;
+				};
+			};
+		};
+	};
+
+	/* =========================================================
+	 * ENABLE I2C2
+	 * ========================================================= */
+	fragment@1 {
+		target = <&i2c2>;
+		__overlay__ {
+			pinctrl-names = "default";
+			pinctrl-0     = <&i2c2m4_xfer>;
+			status        = "okay";
+		};
+	};
+
+	/* =========================================================
+	 * ENABLE I2C MUX
+	 * ========================================================= */
+	fragment@2 {
+		target = <&i2cmux1>;
+		__overlay__ {
+			status = "okay";
+		};
+	};
+
+	/* =========================================================
+	 * CAM0 GMSL BRIDGE
+	 * ========================================================= */
+	fragment@3 {
+		target = <&i2c_cam0>;
+		__overlay__ {
+
+			#address-cells = <1>;
+			#size-cells    = <0>;
+
+			max9296_cam0: max9296@48 {
+				compatible = "mixtile,max9296-fixed-yuv";
+				reg        = <0x48>;
+
+				#address-cells = <1>;
+				#size-cells    = <0>;
+				status         = "okay";
+
+				rockchip,camera-module-index     = <0>;
+				rockchip,camera-module-facing    = "back";
+				rockchip,camera-module-name      = "MAX9296";
+				rockchip,camera-module-lens-name = "GMSL";
+
+				mixtile,max9296-init-sequence = <
+					0x48 0x00 0x05 0x80 0
+					0x48 0x00 0x06 0xdf 0
+					0x48 0x00 0x01 0x01 0
+					0x48 0x00 0x11 0x0f 0
+					0x48 0x03 0x13 0x00 0
+					0x48 0x00 0x10 0x21 200
+					0x48 0x04 0x4b 0x07 0
+					0x48 0x04 0x6d 0x15 0
+					0x48 0x04 0x4d 0x1e 0
+					0x48 0x04 0x4e 0x1e 0
+					0x48 0x04 0x4f 0x00 0
+					0x48 0x04 0x50 0x00 0
+					0x48 0x04 0x51 0x01 0
+					0x48 0x04 0x52 0x01 0
+					0x48 0x04 0x8b 0x07 0
+					0x48 0x04 0xad 0x15 0
+					0x48 0x04 0x8d 0x1e 0
+					0x48 0x04 0x8e 0x5e 0
+					0x48 0x04 0x8f 0x00 0
+					0x48 0x04 0x90 0x40 0
+					0x48 0x04 0x91 0x01 0
+					0x48 0x04 0x92 0x41 0
+					0x48 0x04 0x4a 0x40 0
+					0x48 0x04 0x8a 0x40 0
+					0x48 0x03 0x20 0x2f 100
+					0x48 0x03 0x13 0x02 0
+				>;
+
+				max96717_cam0: max96717@40 {
+					compatible = "mixtile,max96717-script";
+					reg        = <0x40>;
+					status     = "okay";
+
+					mixtile,init-sequence = <
+						0x40 0x00 0x10 0x21 200
+						0x40 0x00 0x6b 0x16 0
+						0x40 0x00 0x73 0x17 0
+						0x40 0x00 0x7b 0x36 0
+						0x40 0x00 0x83 0x36 0
+						0x40 0x00 0x8b 0x36 0
+						0x40 0x00 0x93 0x36 0
+						0x40 0x00 0x9b 0x36 0
+						0x40 0x00 0xa3 0x36 0
+						0x40 0x00 0xab 0x36 20
+						0x40 0x02 0xbe 0x10 200
+						0x40 0x02 0xd3 0x00 0
+						0x40 0x02 0xd6 0x00 0
+						0x40 0x00 0x5b 0x01 0
+						0x40 0x03 0x18 0x5e 0
+						0x40 0x03 0x31 0x33 0
+						0x40 0x02 0xd3 0x10 0
+						0x40 0x02 0xd5 0x07 0
+						0x40 0x02 0xd6 0x10 0
+						0x40 0x02 0xd8 0x07 0
+						0x40 0x02 0xd3 0x84 0
+						0x40 0x02 0xd6 0x84 0
+					>;
+				};
+
+				isx031_cam0: isx031@1a {
+					compatible = "sony,isx031-script";
+					reg        = <0x1a>;
+					status     = "okay";
+
+					mixtile,init-sequence = <
+						0x1a 0xbe 0xf0 0x53 0
+						0x1a 0x8a 0x01 0x80 0
+					>;
+				};
+
+				port {
+					cam0_max9296_out: endpoint {
+						remote-endpoint  = <&cam0_mipi_in>;
+						data-lanes       = <3 4>;
+						link-frequencies = /bits/ 64 <456000000>;
+					};
+				};
+			};
+		};
+	};
+
+	/* =========================================================
+	 * CAM0 DPHY2 PIPELINE
+	 * ========================================================= */
+	fragment@4 {
+		target = <&csi2_dphy2>;
+		__overlay__ {
+			status = "okay";
+
+			ports {
+				#address-cells = <1>;
+				#size-cells    = <0>;
+
+				port@0 {
+					reg            = <0>;
+					#address-cells = <1>;
+					#size-cells    = <0>;
+
+					cam0_mipi_in: endpoint@1 {
+						reg             = <1>;
+						remote-endpoint = <&cam0_max9296_out>;
+						data-lanes      = <3 4>;
+					};
+				};
+
+				port@1 {
+					reg            = <1>;
+					#address-cells = <1>;
+					#size-cells    = <0>;
+
+					cam0_csi_out: endpoint@0 {
+						reg             = <0>;
+						remote-endpoint = <&cam0_mipi2_input>;
+					};
+				};
+			};
+		};
+	};
+
+	/* =========================================================
+	 * CAM0 MIPI CSI2
+	 * ========================================================= */
+	fragment@5 {
+		target = <&mipi3_csi2>;
+		__overlay__ {
+			status = "okay";
+
+			ports {
+				#address-cells = <1>;
+				#size-cells    = <0>;
+
+				port@0 {
+					reg            = <0>;
+					#address-cells = <1>;
+					#size-cells    = <0>;
+
+					cam0_mipi2_input: endpoint@1 {
+						reg             = <1>;
+						remote-endpoint = <&cam0_csi_out>;
+					};
+				};
+
+				port@1 {
+					reg            = <1>;
+					#address-cells = <1>;
+					#size-cells    = <0>;
+
+					cam0_mipi2_output: endpoint@0 {
+						reg             = <0>;
+						remote-endpoint = <&cam0_cif_in>;
+					};
+				};
+			};
+		};
+	};
+
+	/* =========================================================
+	 * CAM0 CIF
+	 * ========================================================= */
+	fragment@6 {
+		target = <&rkcif_mipi_lvds3>;
+		__overlay__ {
+			status = "okay";
+
+			port {
+				cam0_cif_in: endpoint {
+					remote-endpoint = <&cam0_mipi2_output>;
+				};
+			};
+		};
+	};
+
+	/* =========================================================
+	 * CAM0 SDITF
+	 * ========================================================= */
+	fragment@7 {
+		target = <&rkcif_mipi_lvds3_sditf>;
+		__overlay__ {
+			status = "okay";
+
+			port {
+				mipi_lvds2_sditf: endpoint {
+					remote-endpoint = <&isp0_vir0>;
+				};
+			};
+		};
+	};
+
+	fragment@8 {
+		target = <&rkisp0_vir0>;
+		__overlay__ {
+			status = "okay";
+
+			port {
+				#address-cells = <1>;
+				#size-cells    = <0>;
+
+				isp0_vir0: endpoint@0 {
+					reg             = <0>;
+					remote-endpoint = <&mipi_lvds2_sditf>;
+				};
+			};
+		};
+	};
+
+	/* =========================================================
+	 * PIPELINE ENABLE
+	 * ========================================================= */
+	fragment@9  { target = <&rkcif>;      __overlay__ { status = "okay"; }; };
+	fragment@10 { target = <&rkcif_mmu>;  __overlay__ { status = "okay"; }; };
+	fragment@11 { target = <&rkisp0>;     __overlay__ { status = "okay"; }; };
+	fragment@12 { target = <&isp0_mmu>;   __overlay__ { status = "okay"; }; };
+	fragment@13 { target = <&rkisp1>;     __overlay__ { status = "okay"; }; };
+	fragment@14 { target = <&isp1_mmu>;   __overlay__ { status = "okay"; }; };
+};
