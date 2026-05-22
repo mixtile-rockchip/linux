@@ -716,7 +716,7 @@
 };
 
 &i2c3 { 
-	status = "okay";
+	status = "disabled";
 	pinctrl-0 = <&i2c3m0_xfer>;
 };
 
@@ -740,7 +740,7 @@
 };
 
 &i2c5 {
-	status = "okay";
+	status = "disabled";
 	pinctrl-names = "default";
 	pinctrl-0 = <&i2c5m2_xfer>;
 };
@@ -758,7 +758,7 @@
 };
 
 &spi0 {
-	status = "okay";
+	status = "disabled";
 	pinctrl-names = "default";
 	pinctrl-0 = <&spi0m3_cs1 &spi0m3_pins>;
 	num-cs = <1>;
@@ -771,7 +771,7 @@
 };
 
 &spi1 {
-	status = "okay";
+	status = "disabled";
 	pinctrl-names = "default";
 	pinctrl-0 = <&spi1m2_cs0 &spi1m2_pins>;
 	num-cs = <1>;
@@ -784,7 +784,7 @@
 };
 
 &i2s0_8ch {
-	status = "okay";
+	status = "disabled";
 	pinctrl-names = "default";
 	pinctrl-0 = <&i2s0_lrck
 	             &i2s0_sclk
@@ -793,11 +793,11 @@
 };
 
 &i2s5_8ch {
-	status = "okay";
+	status = "disbaled";
 };
 
 &i2s6_8ch {
-	status = "okay";
+	status = "disabled";
 };
 
 &pcie2x1l0 { 
@@ -936,12 +936,12 @@
                 /* GPIO3_B0-B3 */
                 "PIN_33:GPIO13", "", "", "",
                 /* GPIO3_B4-B7 */
-                "", "", "", "",
+                "", "", "", "PIN_31:GPIO11",
 
                 /* GPIO3_C0-C3 */
                 "", "", "", "",
                 /* GPIO3_C4-C7 */
-                "", "", "PIN_31:GPIO11", "",
+                "", "", "", "",
 
                 /* GPIO3_D0-D3 */
                 "", "PIN_22:SPI1_MISO", "PIN_37:SPI1_MOSI", "PIN_13:SPI1_SCK",
