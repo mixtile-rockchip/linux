@@ -6949,6 +6949,7 @@ CONFIG_TYPEC_FUSB302=y
 # CONFIG_TYPEC_HD3SS3220 is not set
 # CONFIG_TYPEC_STUSB160X is not set
 # CONFIG_TYPEC_WUSB3801 is not set
+CONFIG_TYPEC_FUSB301=m
 
 #
 # USB Type-C Multiplexer/DeMultiplexer Switch support
