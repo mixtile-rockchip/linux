@@ -625,7 +625,7 @@
 &edp1 {
 	pinctrl-names = "default";
         pinctrl-0 = <&edp1_hpd>;
-	hpd-gpios = <&gpio3 RK_PD4 GPIO_ACTIVE_HIGH>;
+	hpd-gpios = <&gpio3 RK_PB7 GPIO_ACTIVE_HIGH>;
 	data-lanes = <2 1 0 3>;
 	#sound-dai-cells = <1>;
 	status = "okay";
@@ -837,7 +837,7 @@
 
 	edp {
                 edp1_hpd: edp1-hpd {
-                        rockchip,pins = <3 RK_PD4 RK_FUNC_GPIO &pcfg_pull_none>;
+                        rockchip,pins = <3 RK_PB7 RK_FUNC_GPIO &pcfg_pull_none>;
                 };
         };
 
