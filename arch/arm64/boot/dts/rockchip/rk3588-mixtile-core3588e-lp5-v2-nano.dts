@@ -817,7 +817,7 @@
 };
 
 &pcie30phy {
-	rockchip,pcie30-phymode = <PHY_MODE_PCIE_NANBNB>;
+	rockchip,pcie30-phymode = <PHY_MODE_PCIE_AGGREGATION>;
 	status = "okay";
 };
 
